@@ -16,13 +16,29 @@
                     <p><strong>申请人：</strong>{{ user.username }}</p>
                     <p><strong>申请金额：</strong>{{ "%.2f"|format(loan.amount) }}元</p>
                     <p><strong>贷款期限：</strong>{{ loan.term }}个月</p>
-                    <p><strong>年利率：</strong>{{ "%.2f"|format(loan.interest_rate) }}%</p>
+                    <p><strong>年利率：</strong>{{ "%.2f"|format(loan.interest_rate*100) }}%</p>
                 </div>
                 <div class="col-md-6">
                     <p><strong>月还款额：</strong>{{ "%.2f"|format(loan.monthly_payment) }}元</p>
                     <p><strong>总利息：</strong>{{ "%.2f"|format(loan.total_interest) }}元</p>
                     <p><strong>申请时间：</strong>{{ loan.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-                    <p><strong>贷款用途：</strong>{{ loan.purpose }}</p>
+                    <p><strong>贷款用途：</strong>
+                        {% if loan.purpose == 'business' %}
+                                            经营周转
+                                        {% elif loan.purpose == 'education' %}
+                                            教育
+                                        {% elif loan.purpose == 'home' %}
+                                            购房
+                                        {% elif loan.purpose == 'car' %}
+                                            购车
+                                        {% elif loan.purpose == 'debt_consolidation' %}
+                                            债务整合
+                                        {% elif loan.purpose == 'other' %}
+                                            其他
+                                        {% else %}
+                                            {{ loan.purpose }}
+                                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>

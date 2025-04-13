@@ -114,9 +114,10 @@ class RiskAssessmentService:
                 penalty = 1 / (1 + np.exp(-15 * (ratio - 0.3)))  # 更早、更强惩罚
                 explicit_score = (
                                          0.1 * (features['annual_income'] / 2000000) +
-                                         0.1 * features['previous_default_no'] +
-                                         0.15 * (1 - min(max(features['debt_to_income'], 0), 1)) +
-                                         0.65 * (1 - penalty)  # 反转penalty，增大权重
+                                         0.14 * features['previous_default_no'] +
+                                         0.13 * (1 - min(max(features['debt_to_income'], 0), 1)) +
+                                         0.5 * min(max(features['savings_balance'] /features['loan_amount'], 0), 1)+
+                                         0.13 * (1 - penalty)  # 反转penalty，增大权重
                                  ) * 100
 
 

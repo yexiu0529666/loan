@@ -11,15 +11,15 @@ logging.basicConfig(level=logging.DEBUG,
 data = {
     'age': 25,
     'employment_years': 3,
-    'annual_income': 15,
-    'monthly_income': 15,
-    'savings_balance': 0,
+    'annual_income': 150000,
+    'monthly_income': 15000,
+    'savings_balance': 50000,
     'total_assets': 0,
     'total_liabilities': 0,
     'credit_cards': 0,
     'existing_loans': 0,
     'monthly_payment': 0,
-    'loan_amount': 500000,
+    'loan_amount': 50000,
     'loan_term': 3,
     'dependents': 3,
     'employment_status': 'employed',
@@ -27,7 +27,7 @@ data = {
     'education': 'college',
     'home_ownership': 'rent',
     'loan_purpose': 'education',
-    'previous_default': 'yes'
+    'previous_default': 'no'
 }
 
 # 初始化服务并评估

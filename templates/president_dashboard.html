@@ -114,7 +114,9 @@
                                             {% endif %}
                                         </td>
                                         <td>
+                                            {% if item.loan.status != 'approved' and item.loan.status != 'rejected' %}
                                             <a href="{{ url_for('president_review_loan', loan_id=item.loan.id) }}" class="btn btn-sm btn-primary">审核</a>
+                                            {% endif %}
                                             <a href="{{ url_for('loan_detail', loan_id=item.loan.id) }}" class="btn btn-sm btn-info">详情</a>
                                         </td>
                                     </tr>
