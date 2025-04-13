@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2 text-center">
+            <h1 class="display-4 mb-4">银行小微快贷系统</h1>
+            <p class="lead mb-4">快速、便捷、安全的小微企业贷款服务平台</p>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">系统特点</h5>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <i class="fas fa-bolt fa-3x mb-3 text-primary"></i>
+                            <h6>快速审批</h6>
+                            <p class="text-muted">智能风险评估，快速审批流程</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-shield-alt fa-3x mb-3 text-success"></i>
+                            <h6>安全可靠</h6>
+                            <p class="text-muted">多重安全措施，保护您的信息安全</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-hand-holding-usd fa-3x mb-3 text-info"></i>
+                            <h6>灵活贷款</h6>
+                            <p class="text-muted">多种贷款方案，满足不同需求</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg btn-block">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-lg btn-block">
+                        <i class="fas fa-user-plus"></i> 注册
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <h5>贷款流程</h5>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">1. 注册登录</h6>
+                                <p class="card-text">创建账户并完成身份验证</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">2. 提交申请</h6>
+                                <p class="card-text">填写贷款申请信息</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">3. 风险评估</h6>
+                                <p class="card-text">系统自动进行风险评估</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">4. 审批放款</h6>
+                                <p class="card-text">快速审批，及时放款</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

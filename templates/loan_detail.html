@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}贷款详情 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>贷款详情</h2>
+    
+    <!-- 贷款基本信息 -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>基本信息</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>申请人：</strong>{{ user.username }}</p>
+                    <p><strong>贷款金额：</strong>{{ "%.2f"|format(loan.amount) }}元</p>
+                    <p><strong>贷款期限：</strong>{{ loan.term }}个月</p>
+                    <p><strong>年利率：</strong>{{ "%.2f"|format(loan.interest_rate*100) }}%</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>月还款额：</strong>{{ "%.2f"|format(loan.monthly_payment) }}元</p>
+                    <p><strong>总利息：</strong>{{ "%.2f"|format(loan.total_interest) }}元</p>
+                    <p><strong>申请时间：</strong>{{ loan.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    <p><strong>贷款状态：</strong>
+                        <span class="badge {% if loan.status == 'approved' %}bg-success
+                                         {% elif loan.status == 'rejected' %}bg-danger
+                                         {% else %}bg-warning{% endif %}">
+                            {% if loan.status == 'approved' %}已批准
+                            {% elif loan.status == 'rejected' %}已拒绝
+                            {% elif loan.status == 'pending' %}待处理
+                            {% elif loan.status == 'recommend_approve' %}建议批准
+                            {% elif loan.status == 'recommend_reject' %}建议拒绝
+                            {% else %}{{ loan.status }}{% endif %}
+                        </span>
+                    </p>
+                    <p><strong>模型建议：</strong>
+                        {{ loan.recommendation }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 申请人详细信息 -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>申请人详细信息</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4><strong>个人基本信息</strong></h4>
+                    <p><strong>年龄：</strong>{{ loan.age }}岁</p>
+                    <p><strong>婚姻状况：</strong>
+                        {% if loan.marital_status == 'single' %}未婚
+                        {% elif loan.marital_status == 'married' %}已婚
+                        {% elif loan.marital_status == 'divorced' %}离异
+                        {% elif loan.marital_status == 'widowed' %}丧偶
+                        {% else %}{{ loan.marital_status }}{% endif %}
+                    </p>
+                    <p><strong>教育程度：</strong>
+                        {% if loan.education == 'high_school' %}高中
+                        {% elif loan.education == 'college' %}大专
+                        {% elif loan.education == 'bachelor' %}本科
+                        {% elif loan.education == 'master' %}硕士
+                        {% elif loan.education == 'phd' %}博士
+                        {% else %}{{ loan.education }}{% endif %}
+                    </p>
+                    <p><strong>家庭人口：</strong>{{ loan.dependents }}人</p>
+                    <p><strong>住房情况：</strong>
+                        {% if loan.home_ownership == 'own' %}自有住房
+                        {% elif loan.home_ownership == 'rent' %}租房
+                        {% elif loan.home_ownership == 'mortgage' %}按揭
+                        {% elif loan.home_ownership == 'other' %}其他
+                        {% else %}{{ loan.home_ownership }}{% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h4><strong>工作情况</strong></h4>
+                    <p><strong>工作年限：</strong>{{ loan.employment_years }}年</p>
+                    <p><strong>就业状态：</strong>
+                        {% if loan.employment_status == 'employed' %}在职
+                        {% elif loan.employment_status == 'self_employed' %}自雇
+                        {% elif loan.employment_status == 'unemployed' %}失业
+                        {% elif loan.employment_status == 'retired' %}退休
+                        {% else %}{{ loan.employment_status }}{% endif %}
+                    </p>
+                    <p><strong>年收入：</strong>{{ "%.2f"|format(loan.annual_income) }}元</p>
+                    <p><strong>月收入：</strong>{{ "%.2f"|format(loan.monthly_income) }}元</p>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h4><strong>资产状况</strong></h4>
+                    <p><strong>储蓄余额：</strong>{{ "%.2f"|format(loan.savings_balance) }}元</p>
+                    <p><strong>总资产：</strong>{{ "%.2f"|format(loan.total_assets) }}元</p>
+                    <p><strong>总负债：</strong>{{ "%.2f"|format(loan.total_liabilities) }}元</p>
+                </div>
+                <div class="col-md-6">
+                    <h4><strong>信用状况</strong></h4>
+                    <p><strong>信用卡数量：</strong>{{ loan.credit_cards }}张</p>
+                    <p><strong>历史贷款总额：</strong>{{ "%.2f"|format(loan.his_existing_loans) }}元</p>
+                    <p><strong>历史月还款额：</strong>{{ "%.2f"|format(loan.his_monthly_debt) }}元</p>
+                    <p><strong>历史违约记录：</strong>
+                        {% if loan.previous_default == 'yes' %}有
+                        {% elif loan.previous_default == 'no' %}无
+                        {% else %}{{ loan.previous_default }}{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 账单列表 -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>还款账单</h4>
+        </div>
+        <div class="card-body">
+            {% if bills %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>期数</th>
+                            <th>应还金额</th>
+                            <th>本金</th>
+                            <th>利息</th>
+                            <th>剩余本金</th>
+                            <th>到期日</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bill in bills %}
+                        <tr>
+                            <td>第 {{ bill.period }} 期</td>
+                            <td>{{ "%.2f"|format(bill.amount) }}元</td>
+                            <td>{{ "%.2f"|format(bill.principal) }}元</td>
+                            <td>{{ "%.2f"|format(bill.interest) }}元</td>
+                            <td>{{ "%.2f"|format(bill.remaining_principal) }}元</td>
+                            <td>{{ bill.due_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <span class="badge {% if bill.status == 'paid' %}bg-success
+                                                 {% elif bill.status == 'overdue' %}bg-danger
+                                                 {% else %}bg-warning{% endif %}">
+                                    {% if bill.status == 'paid' %}已还款
+                                    {% elif bill.status == 'overdue' %}已逾期
+                                    {% elif bill.status == 'pending' %}待还款
+                                    {% else %}{{ bill.status }}{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                {% if current_user.role == 'manager' and bill.status == 'overdue' %}
+                                <form method="POST" action="{{ url_for('send_collection_notice', bill_id=bill.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('确定要发送催收通知吗？')">
+                                        催收
+                                    </button>
+                                </form>
+                                {% endif %}
+                                {% if current_user.id == loan.user_id and bill.status != 'paid' %}
+                                <button type="button" class="btn btn-primary btn-sm" onclick="showRepaymentModal({{ bill.id }})">
+                                    还款
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                暂无还款账单。
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- 还款确认模态框 -->
+<div class="modal fade" id="repaymentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确认还款</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>您确定要还款吗？</p>
+                <form id="repaymentForm" method="POST" action="{{ url_for('repay_bill') }}">
+                    <input type="hidden" name="bill_id" id="billId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitRepayment()">确认还款</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showRepaymentModal(billId) {
+    document.getElementById('billId').value = billId;
+    new bootstrap.Modal(document.getElementById('repaymentModal')).show();
+}
+
+function submitRepayment() {
+    document.getElementById('repaymentForm').submit();
+}
+</script>
+{% endblock %} 

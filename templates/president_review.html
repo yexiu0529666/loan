@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}贷款审核 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>贷款申请审核</h2>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>申请信息</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>申请人：</strong>{{ user.username }}</p>
+                    <p><strong>申请金额：</strong>{{ "%.2f"|format(loan.amount) }}元</p>
+                    <p><strong>贷款期限：</strong>{{ loan.term }}个月</p>
+                    <p><strong>年利率：</strong>{{ "%.2f"|format(loan.interest_rate) }}%</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>月还款额：</strong>{{ "%.2f"|format(loan.monthly_payment) }}元</p>
+                    <p><strong>总利息：</strong>{{ "%.2f"|format(loan.total_interest) }}元</p>
+                    <p><strong>申请时间：</strong>{{ loan.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    <p><strong>贷款用途：</strong>{{ loan.purpose }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>风险评估</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>风险评分：</strong>
+                        {% if loan.risk_score %}
+                            <span class="badge {% if loan.risk_score >= 70 %}bg-danger{% elif loan.risk_score >= 50 %}bg-warning{% else %}bg-success{% endif %}">
+                                {{ "%.1f"|format(loan.risk_score) }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary">未评估</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>风险等级：</strong>{{ loan.risk_level }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>经理建议：</strong>
+                        {% if loan.status == 'recommend_approve' %}
+                            <span class="badge bg-success">建议通过</span>
+                        {% elif loan.status == 'recommend_reject' %}
+                            <span class="badge bg-danger">建议拒绝</span>
+                        {% else %}
+                            <span class="badge bg-secondary">未评估</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>审核决定</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('president_review_loan', loan_id=loan.id) }}" id="reviewForm">
+                <div class="mb-3">
+                    <label for="decision" class="form-label">审核决定</label>
+                    <select class="form-select" id="decision" name="decision" required>
+                        <option value="">请选择...</option>
+                        <option value="approve">批准</option>
+                        <option value="reject">拒绝</option>
+                    </select>
+                </div>
+                
+                
+                <button type="submit" class="btn btn-primary">提交审核</button>
+                <a href="{{ url_for('president_dashboard') }}" class="btn btn-secondary">返回</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}行长仪表板 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">个人信息</h5>
+                    <p><strong>用户名：</strong>{{ user.username }}</p>
+                    <p><strong>邮箱：</strong>{{ user.email }}</p>
+                    <p><strong>手机：</strong>{{ user.phone }}</p>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">风险等级说明</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>风险等级</th>
+                                    <th>风险评分</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg-success">低风险</span></td>
+                                    <td>0-30</td>
+                                    <td>建议批准</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning">中风险</span></td>
+                                    <td>31-60</td>
+                                    <td>需要进一步评估</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-danger">高风险</span></td>
+                                    <td>61-80</td>
+                                    <td>建议拒绝</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-dark">极高风险</span></td>
+                                    <td>81-100</td>
+                                    <td>必须拒绝</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">待审核贷款申请</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>申请编号</th>
+                                    <th>申请人</th>
+                                    <th>申请时间</th>
+                                    <th>贷款金额</th>
+                                    <th>贷款期限</th>
+                                    <th>年利率</th>
+                                    <th>月还款额</th>
+                                    <th>风险评分</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if pending_loans %}
+                                    {% for item in pending_loans %}
+                                    <tr>
+                                        <td>{{ item.loan.id }}</td>
+                                        <td>{{ item.user.username }}</td>
+                                        <td>{{ item.loan.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                        <td>{{ "%.2f"|format(item.loan.amount) }}元</td>
+                                        <td>{{ item.loan.term }}个月</td>
+                                        <td>{{ "%.2f"|format(item.loan.interest_rate * 100) }}%</td>
+                                        <td>{{ "%.2f"|format(item.loan.monthly_payment) }}元</td>
+                                        <td>
+                                            {% if item.loan.risk_score %}
+                                                <span class="badge {% if item.loan.risk_score >= 80 %}bg-dark
+                                                                 {% elif item.loan.risk_score >= 60 %}bg-danger
+                                                                 {% elif item.loan.risk_score >= 30 %}bg-warning
+                                                                 {% else %}bg-success{% endif %}">
+                                                    {{ "%.1f"|format(item.loan.risk_score) }}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">未评估</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item.loan.status == 'recommend_approve' %}
+                                            <span class="badge bg-success">建议通过</span>
+                                            {% elif item.loan.status == 'approved' %}
+                                            <span class="badge bg-success">已通过</span>
+                                            {% elif item.loan.status  == 'recommend_reject' %}
+                                            <span class="badge bg-danger">建议拒绝</span>
+                                            {% elif item.loan.status  == 'rejected' %}
+                                            <span class="badge bg-danger">已拒绝</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">未评估</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('president_review_loan', loan_id=item.loan.id) }}" class="btn btn-sm btn-primary">审核</a>
+                                            <a href="{{ url_for('loan_detail', loan_id=item.loan.id) }}" class="btn btn-sm btn-info">详情</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="10" class="text-center">暂无待审核的贷款申请</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

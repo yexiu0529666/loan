@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}审核贷款申请 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">审核贷款申请 #{{ loan.id }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('manager_review_loan', loan_id=loan.id) }}">
+                        <!-- 贷款基本信息 -->
+                        <div class="mb-4">
+                            <h6>贷款基本信息</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <p><strong>申请金额：</strong>{{ "%.2f"|format(loan.amount) }}元</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>贷款期限：</strong>{{ loan.term }}个月</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>年利率：</strong>{{ "%.2f"|format(loan.interest_rate * 100) }}%</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>月还款额：</strong>{{ "%.2f"|format(loan.monthly_payment) }}元</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <p><strong>总利息：</strong>{{ "%.2f"|format(loan.total_interest) }}元</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>贷款用途：</strong>
+                                        {% if loan.purpose == 'business' %}
+                                            经营周转
+                                        {% elif loan.purpose == 'education' %}
+                                            教育
+                                        {% elif loan.purpose == 'home' %}
+                                            购房
+                                        {% elif loan.purpose == 'car' %}
+                                            购车
+                                        {% elif loan.purpose == 'debt_consolidation' %}
+                                            债务整合
+                                        {% elif loan.purpose == 'other' %}
+                                            其他
+                                        {% else %}
+                                            {{ loan.purpose }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>申请时间：</strong>{{ loan.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>风险评分：</strong>{{ "%.1f"|format(loan.risk_score) if loan.risk_score else '未评估' }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 申请人信息 -->
+                        <div class="mb-4">
+                            <h6>申请人信息</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>用户名：</strong>{{ user.username }}</p>
+                                    <p><strong>邮箱：</strong>{{ user.email }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>手机：</strong>{{ user.phone }}</p>
+                                    <p><strong>注册时间：</strong>{{ user.created_at.strftime('%Y-%m-%d') }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 审核决定 -->
+                        <div class="mb-4">
+                            <div class="form-group">
+                                <label for="decision">评估结果</label>
+                                <select class="form-select" id="decision" name="decision" required>
+                                    <option value="">请选择</option>
+                                    <option value="recommend_approve">建议通过并提交行长审核</option>
+                                    <option value="recommend_reject">建议拒绝</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('manager_dashboard') }}" class="btn btn-secondary">返回</a>
+                            <button type="submit" class="btn btn-primary">提交评估</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

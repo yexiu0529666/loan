@@ -1,0 +1,6 @@
+<h1>贷款状态</h1>
+{% for app in applications %}
+    <p>贷款ID: {{ app.id }} | 金额: {{ app.loan_amount }} | 状态: {{ app.status }}</p>
+    <p>风险评分: {{ app.risk_score }} | 建议: {{ app.model_suggestion }}</p>
+{% endfor %}
+<a href="{{ url_for('apply') }}">提交新申请</a>

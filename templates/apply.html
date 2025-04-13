@@ -1,0 +1,19 @@
+<h1>提交贷款申请</h1>
+<form method="POST">
+    <input type="number" name="loan_amount" placeholder="贷款金额" required><br>
+    <input type="number" name="loan_term" placeholder="贷款期限（月）" required><br>
+    <input type="number" name="annual_income" placeholder="年收入" required><br>
+    <input type="number" name="credit_score" placeholder="信用分数" required><br>
+    <select name="occupation">
+        <option value="0">稳定职业</option>
+        <option value="1">自由职业</option>
+        <option value="2">无业</option>
+    </select><br>
+    <select name="repayment_history">
+        <option value="0">按时还款</option>
+        <option value="1">逾期</option>
+        <option value="2">严重逾期</option>
+    </select><br>
+    <input type="number" name="debt_total" placeholder="负债总额" required><br>
+    <input type="submit" value="提交">
+</form>

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}还款记录 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">我的还款记录</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>贷款编号</th>
+                                    <th>贷款金额</th>
+                                    <th>申请日期</th>
+                                    <th>还款金额</th>
+                                    <th>还款日期</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if records %}
+                                    {% for record in records %}
+                                    <tr>
+                                        <td>{{ record.loan_id }}</td>
+                                        <td>¥{{ "%.2f"|format(record.loan_amount) }}</td>
+                                        <td>{{ record.application_date.strftime('%Y-%m-%d') }}</td>
+                                        <td>¥{{ "%.2f"|format(record.amount) }}</td>
+                                        <td>{{ record.payment_date.strftime('%Y-%m-%d') }}</td>
+                                        <td>
+                                            {% if record.status == 'paid' %}
+                                                <span class="badge bg-success">已还款</span>
+                                            {% elif record.status == 'overdue' %}
+                                                <span class="badge bg-danger">逾期</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">待还款</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">暂无还款记录</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}贷款管理 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">贷款管理</h4>
+    </div>
+    <div class="card-body">
+        <!-- 筛选表单 -->
+        <form method="GET" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="status" class="form-label">状态</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">全部</option>
+                        <option value="pending" {% if request.args.get('status') == 'pending' %}selected{% endif %}>待审核</option>
+                        <option value="approved" {% if request.args.get('status') == 'approved' %}selected{% endif %}>已通过</option>
+                        <option value="rejected" {% if request.args.get('status') == 'rejected' %}selected{% endif %}>已拒绝</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="amount_min" class="form-label">最小金额</label>
+                    <input type="number" class="form-control" id="amount_min" name="amount_min" value="{{ request.args.get('amount_min', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="amount_max" class="form-label">最大金额</label>
+                    <input type="number" class="form-control" id="amount_max" name="amount_max" value="{{ request.args.get('amount_max', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="date" class="form-label">申请日期</label>
+                    <input type="date" class="form-control" id="date" name="date" value="{{ request.args.get('date', '') }}">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">筛选</button>
+                    <a href="{{ url_for('loan_management') }}" class="btn btn-outline-secondary">重置</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- 贷款列表 -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>申请编号</th>
+                        <th>申请人</th>
+                        <th>申请金额</th>
+                        <th>贷款用途</th>
+                        <th>申请日期</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in loans %}
+                    <tr>
+                        <td>{{ loan.id }}</td>
+                        <td>{{ loan.applicant.username }}</td>
+                        <td>¥{{ "%.2f"|format(loan.amount) }}</td>
+                        <td>{{ loan.purpose }}</td>
+                        <td>{{ loan.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if loan.status == 'pending' %}
+                            <span class="badge bg-warning">待审核</span>
+                            {% elif loan.status == 'approved' %}
+                            <span class="badge bg-success">已通过</span>
+                            {% elif loan.status == 'rejected' %}
+                            <span class="badge bg-danger">已拒绝</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('loan_detail', loan_id=loan.id) }}" class="btn btn-sm btn-outline-primary">查看详情</a>
+                            {% if loan.status == 'pending' %}
+                                {% if session.get('role') == 'manager' %}
+                                <a href="{{ url_for('review_loan', loan_id=loan.id) }}" class="btn btn-sm btn-outline-success">审核</a>
+                                {% elif session.get('role') == 'president' %}
+                                <a href="{{ url_for('approve_loan', loan_id=loan.id) }}" class="btn btn-sm btn-outline-success">审批</a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 分页 -->
+        {% if pagination %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('loan_management', page=pagination.prev_num, **request.args) }}">上一页</a>
+                </li>
+                {% endif %}
+                
+                {% for page in pagination.iter_pages() %}
+                    {% if page %}
+                        <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('loan_management', page=page, **request.args) }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('loan_management', page=pagination.next_num, **request.args) }}">下一页</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

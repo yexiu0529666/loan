@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}用户仪表盘 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">个人信息</h5>
+                    <p><strong>用户名：</strong>{{ user.username }}</p>
+                    <p><strong>邮箱：</strong>{{ user.email }}</p>
+                    <p><strong>手机：</strong>{{ user.phone }}</p>
+                </div>
+            </div>
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">我的通知</h5>
+                    <div class="list-group">
+                        {% for notification in notifications %}
+                        <div class="list-group-item {% if not notification.is_read %}list-group-item-info{% endif %}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ notification.title }}</h6>
+                                <small>{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ notification.content }}</p>
+                            {% if not notification.is_read %}
+                            <form method="POST" action="{{ url_for('mark_notification_read', notification_id=notification.id) }}" class="mt-2">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">标记为已读</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">快捷操作</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('apply_loan') }}" class="btn btn-primary">申请贷款</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">我的贷款</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>申请时间</th>
+                                    <th>贷款金额</th>
+                                    <th>贷款期限</th>
+                                    <th>年利率</th>
+                                    <th>月还款额</th>
+                                    <th>总利息</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if loans %}
+                                    {% for loan in loans %}
+                                    <tr>
+                                        <td>{{ loan.created_at.strftime('%Y-%m-%d') }}</td>
+                                        <td>{{ "%.2f"|format(loan.amount) }}元</td>
+                                        <td>{{ loan.term }}个月</td>
+                                        <td>{{ "%.2f"|format(loan.interest_rate * 100) }}%</td>
+                                        <td>{{ "%.2f"|format(loan.monthly_payment) }}元</td>
+                                        <td>{{ "%.2f"|format(loan.total_interest) }}元</td>
+                                        <td>
+                                            {% if loan.status == 'rejected' %}
+                                                <span class="badge bg-danger">已拒绝</span>
+                                            {% elif loan.status == 'approved' %}
+                                                <span class="badge bg-success">已通过</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">待审核</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('loan_detail', loan_id=loan.id) }}" class="btn btn-sm btn-outline-primary">查看详情</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="8" class="text-center">暂无贷款记录</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

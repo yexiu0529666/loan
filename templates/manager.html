@@ -1,0 +1,15 @@
+<h1>{{ '客户经理' if role == 'manager' else '行长' }}审核</h1>
+{% for app in applications %}
+    <p>贷款ID: {{ app.id }} | 用户: {{ app.user_id }} | 金额: {{ app.loan_amount }}</p>
+    <p>风险评分: {{ app.risk_score }} | 建议: {{ app.model_suggestion }}</p>
+    <form method="POST" action="{{ url_for('review_' + role, app_id=app.id) }}">
+        <textarea name="comment" placeholder="审核意见"></textarea><br>
+        {% if role == 'president' %}
+            <select name="decision">
+                <option value="approve">通过</option>
+                <option value="reject">拒绝</option>
+            </select><br>
+        {% endif %}
+        <input type="submit" value="提交">
+    </form>
+{% endfor %}

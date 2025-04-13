@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block title %}申请贷款 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>贷款申请</h2>
+    <form id="loanForm" method="POST" action="{{ url_for('apply_loan') }}">
+        <div class="row">
+            <!-- 基本信息 -->
+            <div class="col-md-6">
+                <h4 class="mb-3">基本信息</h4>
+                <div class="mb-3">
+                    <label for="age" class="form-label">年龄</label>
+                    <input type="number" class="form-control" id="age" name="age" required min="18" max="100">
+                </div>
+                <div class="mb-3">
+                    <label for="marital_status" class="form-label">婚姻状况</label>
+                    <select class="form-select" id="marital_status" name="marital_status" required>
+                        <option value="">请选择</option>
+                        <option value="single">未婚</option>
+                        <option value="married">已婚</option>
+                        <option value="divorced">离异</option>
+                        <option value="widowed">丧偶</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="dependents" class="form-label">家属人数</label>
+                    <input type="number" class="form-control" id="dependents" name="dependents" required min="0" max="10">
+                </div>
+                <div class="mb-3">
+                    <label for="education" class="form-label">教育水平</label>
+                    <select class="form-select" id="education" name="education" required>
+                        <option value="">请选择</option>
+                        <option value="high_school">高中</option>
+                        <option value="college">大专</option>
+                        <option value="bachelor">本科</option>
+                        <option value="master">硕士</option>
+                        <option value="phd">博士</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 就业信息 -->
+            <div class="col-md-6">
+                <h4 class="mb-3">就业信息</h4>
+                <div class="mb-3">
+                    <label for="employment_status" class="form-label">就业状况</label>
+                    <select class="form-select" id="employment_status" name="employment_status" required>
+                        <option value="">请选择</option>
+                        <option value="employed">在职</option>
+                        <option value="self_employed">自雇</option>
+                        <option value="unemployed">失业</option>
+                        <option value="retired">退休</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="work_experience" class="form-label">工作年限</label>
+                    <input type="number" class="form-control" id="work_experience" name="work_experience" required min="0" max="50">
+                </div>
+                <div class="mb-3">
+                    <label for="annual_income" class="form-label">年收入（元）</label>
+                    <input type="number" class="form-control" id="annual_income" name="annual_income" required min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="monthly_income" class="form-label">月收入（元）</label>
+                    <input type="number" class="form-control" id="monthly_income" name="monthly_income" required min="0">
+                </div>
+            </div>
+
+            <!-- 资产信息 -->
+            <div class="col-md-6">
+                <h4 class="mb-3">资产信息</h4>
+                <div class="mb-3">
+                    <label for="savings_balance" class="form-label">储蓄余额（元）</label>
+                    <input type="number" class="form-control" id="savings_balance" name="savings_balance" required min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="total_assets" class="form-label">总资产（元）</label>
+                    <input type="number" class="form-control" id="total_assets" name="total_assets" required min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="total_liabilities" class="form-label">总负债（元）</label>
+                    <input type="number" class="form-control" id="total_liabilities" name="total_liabilities" required min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="home_ownership" class="form-label">住房状况</label>
+                    <select class="form-select" id="home_ownership" name="home_ownership" required>
+                        <option value="">请选择</option>
+                        <option value="own">自有住房</option>
+                        <option value="mortgage">按揭住房</option>
+                        <option value="rent">租房</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 信用信息 -->
+            <div class="col-md-6">
+                <h4 class="mb-3">信用信息</h4>
+                <div class="mb-3">
+                    <label for="credit_cards" class="form-label">信用卡数量</label>
+                    <input type="number" class="form-control" id="credit_cards" name="credit_cards" required min="0" max="20">
+                </div>
+                <div class="mb-3">
+                    <label for="existing_loans" class="form-label">现有贷款（元）</label>
+                    <input type="number" class="form-control" id="existing_loans" name="existing_loans" required min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="monthly_debt" class="form-label">月还贷额（元）</label>
+                    <input type="number" class="form-control" id="monthly_debt" name="monthly_debt" required min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="previous_default" class="form-label">历史违约</label>
+                    <select class="form-select" id="previous_default" name="previous_default" required>
+                        <option value="">请选择</option>
+                        <option value="no">无</option>
+                        <option value="yes">有</option>
+                    </select>
+                </div>
+                <!-- 添加征信报告上传功能 -->
+                <div class="mb-3">
+                    <label for="credit_report" class="form-label">上传征信报告</label>
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="credit_report" name="credit_report" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <button class="btn btn-outline-secondary" type="button" id="previewReport">预览</button>
+                    </div>
+                    <div class="form-text">支持PDF、JPG、PNG格式，文件大小不超过10MB</div>
+                </div>
+                <div class="mb-3" id="reportPreview" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            征信报告预览
+                            <button type="button" class="btn-close float-end" aria-label="Close" id="closePreview"></button>
+                        </div>
+                        <div class="card-body">
+                            <div id="previewContent" class="text-center">
+                                <p class="text-muted">加载预览中...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 贷款信息 -->
+            <div class="col-md-12">
+                <h4 class="mb-3">贷款信息</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="loan_amount" class="form-label">贷款金额（元）</label>
+                            <select class="form-select" id="loan_amount" name="loan_amount" required>
+                                <option value="">请选择贷款金额</option>
+                                <option value="10000">10,000元</option>
+                                <option value="30000">30,000元</option>
+                                <option value="50000">50,000元</option>
+                                <option value="100000">100,000元</option>
+                                <option value="200000">200,000元</option>
+                                <option value="300000">300,000元</option>
+                                <option value="500000">500,000元</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="loan_term" class="form-label">贷款期限（月）</label>
+                            <select class="form-select" id="loan_term" name="loan_term" required>
+                                <option value="">请选择贷款期限</option>
+                                <option value="3">3个月</option>
+                                <option value="6">6个月</option>
+                                <option value="12">12个月</option>
+                                <option value="24">24个月</option>
+                                <option value="36">36个月</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="purpose" class="form-label">贷款用途</label>
+                            <select class="form-select" id="purpose" name="purpose" required>
+                                <option value="">请选择</option>
+                                <option value="business">经营周转</option>
+                                <option value="education">教育</option>
+                                <option value="home">购房</option>
+                                <option value="car">购车</option>
+                                <option value="debt_consolidation">债务整合</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 利率计算结果 -->
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">利率计算结果</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p class="mb-1">年利率</p>
+                                <h4 id="interestRate">--</h4>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1">月还款额</p>
+                                <h4 id="monthlyPayment">--</h4>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1">总利息</p>
+                                <h4 id="totalInterest">--</h4>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1">总还款额</p>
+                                <h4 id="totalPayment">--</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">提交申请</button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">返回</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loanForm');
+    
+    // 验证总资产大于等于储蓄余额
+    document.getElementById('total_assets').addEventListener('input', function() {
+        const totalAssets = parseFloat(this.value) || 0;
+        const savingsBalance = parseFloat(document.getElementById('savings_balance').value) || 0;
+        if (totalAssets < savingsBalance) {
+            this.setCustomValidity('总资产不能小于储蓄余额');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    // 计算利率和还款信息
+    function calculateInterest() {
+        // 只获取贷款金额和期限
+        const loanAmount = parseFloat(document.getElementById('loan_amount').value) || 0;
+        const loanTerm = parseFloat(document.getElementById('loan_term').value) || 0;
+        
+        console.log('计算利率 - 贷款金额:', loanAmount, '贷款期限:', loanTerm);
+        
+        // 只有当贷款金额和期限都有效时才发送请求
+        if (loanAmount > 0 && loanTerm > 0) {
+            fetch('/calculate_interest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    loan_amount: loanAmount,
+                    loan_term: loanTerm
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    console.error('计算错误:', data.error);
+                    return;
+                }
+                
+                console.log('利率计算结果:', data);
+                
+                // 更新显示
+                document.getElementById('interestRate').textContent = (data.interest_rate * 100).toFixed(2) + '%';
+                document.getElementById('monthlyPayment').textContent = '¥' + data.monthly_payment.toFixed(2);
+                document.getElementById('totalInterest').textContent = '¥' + data.total_interest.toFixed(2);
+                document.getElementById('totalPayment').textContent = '¥' + data.total_payment.toFixed(2);
+            })
+            .catch(error => {
+                console.error('请求错误:', error);
+                // 显示错误信息
+                document.getElementById('interestRate').textContent = '计算失败';
+                document.getElementById('monthlyPayment').textContent = '--';
+                document.getElementById('totalInterest').textContent = '--';
+                document.getElementById('totalPayment').textContent = '--';
+            });
+        } else {
+            // 重置显示
+            document.getElementById('interestRate').textContent = '--';
+            document.getElementById('monthlyPayment').textContent = '--';
+            document.getElementById('totalInterest').textContent = '--';
+            document.getElementById('totalPayment').textContent = '--';
+        }
+    }
+    
+    // 监听贷款金额和期限的变化
+    document.getElementById('loan_amount').addEventListener('change', calculateInterest);
+    document.getElementById('loan_term').addEventListener('change', calculateInterest);
+    
+    // 表单提交前验证
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+
+    // 征信报告上传和预览功能
+    const creditReportInput = document.getElementById('credit_report');
+    const previewButton = document.getElementById('previewReport');
+    const reportPreview = document.getElementById('reportPreview');
+    const previewContent = document.getElementById('previewContent');
+    const closePreview = document.getElementById('closePreview');
+    
+    // 文件大小验证（10MB）
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    
+    creditReportInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            if (file.size > MAX_FILE_SIZE) {
+                alert('文件大小不能超过10MB');
+                this.value = '';
+                return;
+            }
+            
+            // 验证文件类型
+            const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+            if (!validTypes.includes(file.type)) {
+                alert('请上传PDF、JPG或PNG格式的文件');
+                this.value = '';
+                return;
+            }
+        }
+    });
+    
+    previewButton.addEventListener('click', function() {
+        const file = creditReportInput.files[0];
+        if (!file) {
+            alert('请先选择文件');
+            return;
+        }
+        
+        reportPreview.style.display = 'block';
+        
+        if (file.type === 'application/pdf') {
+            previewContent.innerHTML = '<iframe src="' + URL.createObjectURL(file) + '" width="100%" height="500px"></iframe>';
+        } else {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewContent.innerHTML = '<img src="' + e.target.result + '" class="img-fluid" alt="征信报告预览">';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    closePreview.addEventListener('click', function() {
+        reportPreview.style.display = 'none';
+        previewContent.innerHTML = '<p class="text-muted">加载预览中...</p>';
+    });
+});
+</script>
+{% endblock %} 

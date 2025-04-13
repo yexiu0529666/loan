@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}用户仪表板 - 银行小微快贷系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>用户仪表板</h2>
+    
+    <!-- 贷款列表 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>我的贷款</h4>
+        </div>
+        <div class="card-body">
+            {% if current_user.submitted_applications %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>贷款ID</th>
+                            <th>金额</th>
+                            <th>期限</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for loan in current_user.submitted_applications %}
+                        <tr>
+                            <td>{{ loan.id }}</td>
+                            <td>{{ "%.2f"|format(loan.amount) }}元</td>
+                            <td>{{ loan.term }}个月</td>
+                            <td>{{ loan.status }}</td>
+                            <td>
+                                <a href="{{ url_for('loan_detail', loan_id=loan.id) }}" class="btn btn-sm btn-primary">查看详情</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>您还没有申请任何贷款。</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 通知列表 -->
+    <div class="card">
+        <div class="card-header">
+            <h4>我的通知</h4>
+        </div>
+        <div class="card-body">
+            {% if current_user.received_notifications %}
+            <div class="list-group">
+                {% for notification in current_user.received_notifications %}
+                <div class="list-group-item {% if not notification.is_read %}list-group-item-warning{% endif %}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ notification.title }}</h5>
+                        <small>{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+                    <p class="mb-1">{{ notification.content }}</p>
+                    {% if not notification.is_read %}
+                    <form action="{{ url_for('mark_notification_read', notification_id=notification.id) }}" method="POST" class="mt-2">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">标记为已读</button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>您目前没有未读通知。</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
